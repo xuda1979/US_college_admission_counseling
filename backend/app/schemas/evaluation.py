@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class EvaluationRead(BaseModel):
@@ -13,8 +13,7 @@ class EvaluationRead(BaseModel):
     recommendations: list[dict[str, Any]] | None = None
     created_at: datetime | None = None
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class EvaluationRequest(BaseModel):

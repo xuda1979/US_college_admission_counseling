@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class SuggestionRead(BaseModel):
@@ -14,5 +14,4 @@ class SuggestionRead(BaseModel):
     acknowledged_at: datetime | None = None
     is_archived: bool = False
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

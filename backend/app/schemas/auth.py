@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class ApplicantCreate(BaseModel):
@@ -12,8 +12,7 @@ class ApplicantRead(BaseModel):
     email: EmailStr
     full_name: str
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Token(BaseModel):
