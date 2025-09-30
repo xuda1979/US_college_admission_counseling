@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class MilestoneRead(BaseModel):
@@ -11,5 +11,4 @@ class MilestoneRead(BaseModel):
     due_date: datetime | None = None
     completed_at: datetime | None = None
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
