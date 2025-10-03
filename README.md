@@ -2,6 +2,8 @@
 
 This project provides a full-stack foundation for a US university counseling assistant that helps applicants evaluate and improve their applications using GPT-5 through the OpenAI API.
 
+The repository now ships with a production-ready Docker image that bundles the API and the compiled React single-page application so that the platform can be deployed to a standard web server with a single command.
+
 ## Project Structure
 
 ```
@@ -14,19 +16,16 @@ This project provides a full-stack foundation for a US university counseling ass
 
 ## Backend Setup
 
-1. Install dependencies using [Poetry](https://python-poetry.org/):
+1. Copy `.env.example` to `.env` and fill in the required secrets:
    ```bash
    cd backend
-   poetry install
+   cp .env.example .env
+   # Edit .env to set OPENAI_API_KEY and JWT_SECRET_KEY
    ```
 
-2. Create a `.env` file inside `backend/` with the following variables:
-   ```env
-   OPENAI_API_KEY=your-openai-key
-   DATABASE_URL=sqlite+aiosqlite:///./data/app.db
-   JWT_SECRET_KEY=replace-with-strong-secret
-   CORS_ORIGINS=http://localhost:5173
-   FRONTEND_BUILD_DIR=../frontend/dist
+2. Install dependencies using [Poetry](https://python-poetry.org/):
+   ```bash
+   poetry install
    ```
 
 3. Apply database migrations:
@@ -67,6 +66,28 @@ The React dashboard includes dedicated routes for the applicant overview, evalua
    ```
 
    The generated files live in `frontend/dist/`. The FastAPI app automatically serves this directory when `FRONTEND_BUILD_DIR` points to it (the default), so running `uvicorn` will host the API and the compiled web client together.
+
+## Containerized Deployment
+
+To deploy the full stack behind a single web service, use the provided Docker setup. The multi-stage image builds the React dashboard, installs the FastAPI backend, applies database migrations, and serves everything through Uvicorn.
+
+1. Copy the Docker environment template and populate the required values:
+   ```bash
+   cp backend/.env.docker.example backend/.env.docker
+   # Edit backend/.env.docker to set OPENAI_API_KEY and JWT_SECRET_KEY
+   ```
+
+2. Start the stack:
+   ```bash
+   docker compose up --build
+   ```
+
+   The service exposes port `8000` by default. Visit `http://localhost:8000/app` to access the frontend and `http://localhost:8000/docs` for the interactive API documentation. Static assets and the API share the same container, making deployment on platforms such as DigitalOcean, Fly.io, Render, or any Docker-compatible host straightforward.
+
+3. To run database migrations manually (for example during upgrades), execute:
+   ```bash
+   docker compose run --rm web alembic upgrade head
+   ```
 
 ## Documentation
 
