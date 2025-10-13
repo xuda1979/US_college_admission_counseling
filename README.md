@@ -89,6 +89,36 @@ To deploy the full stack behind a single web service, use the provided Docker se
    docker compose run --rm web alembic upgrade head
    ```
 
+## Deploying to Google Cloud Compute Engine
+
+When you are ready to host the platform on Google Cloud, the repository ships with a helper script that builds the Docker image, publishes it to Artifact Registry, and provisions a Compute Engine instance that runs the container with your configuration.
+
+1. Prerequisites:
+   - Install the [Google Cloud CLI](https://cloud.google.com/sdk/docs/install) and authenticate with `gcloud auth login`.
+   - Enable the Artifact Registry and Compute Engine APIs in your project: `gcloud services enable artifactregistry.googleapis.com compute.googleapis.com`.
+   - Ensure Docker is installed locally and that you have permission to push images.
+   - Create `backend/.env.docker` (or another env file) with production-ready secrets.
+
+2. Run the deployment script from the repository root, providing the required environment variables:
+   ```bash
+   export PROJECT_ID="your-gcp-project"
+   export ENV_FILE="backend/.env.docker"  # or a custom path with your secrets
+   ./scripts/deploy_to_gce.sh
+   ```
+
+   Optional variables include `REGION`, `ZONE`, `MACHINE_TYPE`, `IMAGE_TAG`, and `INSTANCE_NAME`. The script will:
+   - Create an Artifact Registry repository if it does not exist.
+   - Build and push the Docker image to `${REGION}-docker.pkg.dev/${PROJECT_ID}`.
+   - Provision (or replace) a Container-Optimized OS VM and launch the container with your environment file.
+   - Open firewall rules for HTTP traffic on ports 80 and 8000.
+
+3. After the VM boots, retrieve its external IP with:
+   ```bash
+   gcloud compute instances describe "$INSTANCE_NAME" --zone "$ZONE" --format='get(networkInterfaces[0].accessConfigs[0].natIP)'
+   ```
+
+   Visit `http://<external-ip>:8000/app` to reach the frontend and `http://<external-ip>:8000/docs` for the API documentation.
+
 ## Documentation
 
 Additional documentation lives under `docs/`:
