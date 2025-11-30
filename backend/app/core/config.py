@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     debug: bool = Field(False, env="DEBUG")
     database_url: str = Field("sqlite+aiosqlite:///./data/app.db", env="DATABASE_URL")
     openai_api_key: str | None = Field(None, env="OPENAI_API_KEY")
+    mock_openai: bool = Field(False, env="MOCK_OPENAI")
     openai_model: str = Field("gpt-5", env="OPENAI_MODEL")
     access_token_expire_minutes: int = Field(60 * 24, env="ACCESS_TOKEN_EXPIRE_MINUTES")
     jwt_secret_key: str = Field("change-me", env="JWT_SECRET_KEY")
