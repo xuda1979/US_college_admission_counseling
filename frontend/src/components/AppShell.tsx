@@ -1,20 +1,24 @@
 import { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
+import { LayoutDashboard, GraduationCap, FileText, Calendar, BookOpen } from 'lucide-react';
 
 import './AppShell.css';
 
 const navItems = [
-  { to: '/dashboard', label: 'Dashboard' },
-  { to: '/evaluations', label: 'Evaluations' },
-  { to: '/essays', label: 'Essays' },
-  { to: '/planner', label: 'Planner' }
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/evaluations', label: 'Evaluations', icon: GraduationCap },
+  { to: '/essays', label: 'Essays', icon: FileText },
+  { to: '/planner', label: 'Planner', icon: Calendar }
 ];
 
 export const AppShell = ({ children }: { children: ReactNode }) => {
   return (
     <div className="app-shell">
       <aside className="app-shell__sidebar">
-        <h1 className="app-shell__logo">Counselor</h1>
+        <div className="app-shell__header">
+          <BookOpen className="app-shell__logo-icon" size={32} />
+          <h1 className="app-shell__logo">Counselor</h1>
+        </div>
         <nav>
           {navItems.map((item) => (
             <NavLink
@@ -24,7 +28,8 @@ export const AppShell = ({ children }: { children: ReactNode }) => {
                 `app-shell__nav-item ${isActive ? 'app-shell__nav-item--active' : ''}`
               }
             >
-              {item.label}
+              <item.icon size={20} />
+              <span>{item.label}</span>
             </NavLink>
           ))}
         </nav>
